@@ -1,0 +1,28 @@
+QN- NEW 21 GAME(LEETCODE 837)
+
+class Solution {
+    public double new21Game(int n, int k, int maxPts) {
+          // Edge cases
+        if (k == 0 || n >= k - 1 + maxPts) return 1.0;
+
+        double[] dp = new double[n + 1];
+        dp[0] = 1.0;
+        double windowSum = 1.0;  // Sum of last maxPts probabilities
+        double ans = 0.0;
+
+        for (int i = 1; i <= n; i++) {
+            dp[i] = windowSum / maxPts;
+
+            if (i < k) {
+                windowSum += dp[i]; // still drawing cards
+            } else {
+                ans += dp[i]; // game ends, accumulate probability
+            }
+
+            if (i - maxPts >= 0) {
+                windowSum -= dp[i - maxPts]; // slide window
+            }
+        }
+        return ans;
+    }
+}
