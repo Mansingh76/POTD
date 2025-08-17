@@ -1,0 +1,30 @@
+QN-  Sort by Absolute Difference
+
+📝 Problem Description
+Given an array arr[] of integers and a number x, the task is to sort the array according to the absolute difference of each element with x.
+
+👉 If two elements have the same absolute difference from x, then the element which appeared earlier in the array should come first (i.e., maintain stability of sorting). 
+
+
+
+class Solution {
+    public void rearrange(int[] arr, int x) {
+        int n = arr.length;
+        Integer[] idx = new Integer[n];
+        for (int i = 0; i < n; i++) idx[i] = i;
+
+        // Sort indices based on absolute difference
+        Arrays.sort(idx, (i, j) -> {
+            int di = Math.abs(arr[i] - x);
+            int dj = Math.abs(arr[j] - x);
+            if (di != dj) return di - dj;
+            return i - j; // preserve original order when differences tie
+        });
+
+        // Rearrange arr in-place
+        int[] copy = arr.clone();
+        for (int i = 0; i < n; i++) {
+            arr[i] = copy[idx[i]];
+        }
+    }
+}
