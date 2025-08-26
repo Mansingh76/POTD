@@ -1,0 +1,16 @@
+QN - POWER OF FOUR (LEETCODE 342)
+
+
+Approach  Bit Manipulation
+
+A number is a power of four if:
+It’s a power of two (only one bit set).
+That bit is at an even position (0-indexed).
+
+
+class Solution {
+    public boolean isPowerOfFour(int n) {
+        // check power of two (only one bit set) and mask ensures bit at even position
+        return n > 0 && (n & (n - 1)) == 0 && (n & 0x55555555) != 0;
+    }
+}
