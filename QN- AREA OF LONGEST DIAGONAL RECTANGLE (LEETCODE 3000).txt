@@ -1,0 +1,17 @@
+QN- AREA OF LONGEST DIAGONAL RECTANGLE (LEETCODE 3000)
+
+class Solution {
+    public int areaOfMaxDiagonal(int[][] dimensions) {
+        int maxDiag = 0, maxArea = 0;
+        for (int[] d : dimensions) {
+            int w = d[0], h = d[1];
+            int diag = w * w + h * h;
+            int area = w * h;
+            if (diag > maxDiag || (diag == maxDiag && area > maxArea)) {
+                maxDiag = diag;
+                maxArea = area;
+            }
+        }
+        return maxArea;
+    }
+}
