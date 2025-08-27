@@ -1,0 +1,62 @@
+QN - LENGTH OF LONGEST V SHAPED DIAGONAL SEGMENT
+
+
+class Solution {
+    private int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}}; // down-right, down-left, up-right, up-left
+    private int[] clockwiseTurn = {1, 3, 0, 2}; // 90-degree clockwise turns
+    
+    public int lenOfVDiagonal(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+        
+        int n = grid.length, m = grid[0].length;
+        int maxLength = 0;
+        
+        // Try starting from every cell that contains 1
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 1) {
+                    // Try all four diagonal directions
+                    for (int dir = 0; dir < 4; dir++) {
+                        maxLength = Math.max(maxLength, dfs(grid, i, j, dir, 0, false));
+                    }
+                }
+            }
+        }
+        
+        return maxLength;
+    }
+    
+    private int dfs(int[][] grid, int r, int c, int direction, int step, boolean hasTurned) {
+        int n = grid.length, m = grid[0].length;
+        
+        if (r < 0 || r >= n || c < 0 || c >= m) {
+            return 0;
+        }
+        
+        // Check if current cell matches expected value in sequence
+        int expected = (step == 0) ? 1 : ((step - 1) % 2 == 0 ? 2 : 0);
+        
+        if (grid[r][c] != expected) {
+            return 0;
+        }
+        
+        int maxLength = 1; // Current cell counts
+        
+        // Continue in same direction
+        int dr = directions[direction][0];
+        int dc = directions[direction][1];
+        maxLength = Math.max(maxLength, 1 + dfs(grid, r + dr, c + dc, direction, step + 1, hasTurned));
+        
+        // Try making a clockwise turn (if we haven't turned yet)
+        if (!hasTurned) {
+            int newDir = clockwiseTurn[direction];
+            dr = directions[newDir][0];
+            dc = directions[newDir][1];
+            maxLength = Math.max(maxLength, 1 + dfs(grid, r + dr, c + dc, newDir, step + 1, true));
+        }
+        
+        return maxLength;
+    }
+}
