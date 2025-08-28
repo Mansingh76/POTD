@@ -1,0 +1,35 @@
+
+QN - SORT MATRIX BY DIAGONALS(LEETCODE 3446)
+
+
+class Solution {
+    public int[][] sortMatrix(int[][] grid) {
+         int n = grid.length;
+        Map<Integer, Deque<Integer>> diag = new HashMap<>();
+
+        Map<Integer, List<Integer>> buckets = new HashMap<>();
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < n; c++) {
+                int k = r - c;
+                buckets.computeIfAbsent(k, x -> new ArrayList<>()).add(grid[r][c]);
+            }
+        }
+
+        for (Map.Entry<Integer, List<Integer>> e : buckets.entrySet()) {
+            List<Integer> list = e.getValue();
+            Collections.sort(list);
+            Deque<Integer> dq = new ArrayDeque<>(list);
+            diag.put(e.getKey(), dq);
+        }
+
+        for (int r = 0; r < n; r++) {
+            for (int c = 0; c < n; c++) {
+                int k = r - c;
+                Deque<Integer> dq = diag.get(k);
+                grid[r][c] = (k < 0) ? dq.pollFirst() : dq.pollLast();
+            }
+        }
+
+        return grid;
+    }
+}
