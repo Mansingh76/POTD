@@ -1,4 +1,4 @@
-9. Valid Sudoku — 36
+QM - VALID SUDOKU (LEETCODE 37)
 
 class solution{
 public boolean isValidSudoku(char[][] board) {
@@ -27,3 +27,4 @@ public boolean isValidSudoku(char[][] board) {
     }
     return true;
 }
+
