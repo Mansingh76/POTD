@@ -1,0 +1,50 @@
+QN- MAXIMUM AVERAGE PASS RATIO (LEETCODE 1792)
+
+
+
+
+class Solution {
+    public double maxAverageRatio(int[][] classes, int extraStudents) {
+        // Priority Queue (max heap) based on gain
+        PriorityQueue<ClassData> pq = new PriorityQueue<>(
+            (a, b) -> Double.compare(b.gain(), a.gain())
+        );
+
+        // Put all classes in heap
+        for (int[] c : classes) {
+            pq.offer(new ClassData(c[0], c[1]));
+        }
+
+        // Assign extra students
+        for (int i = 0; i < extraStudents; i++) {
+            ClassData best = pq.poll();
+            best.passed++;
+            best.total++;
+            pq.offer(best);
+        }
+
+        // Calculate average
+        double sum = 0.0;
+        int n = classes.length;
+        while (!pq.isEmpty()) {
+            ClassData c = pq.poll();
+            sum += (double) c.passed / c.total;
+        }
+
+        return sum / n;
+    }
+
+    // Helper class
+    static class ClassData {
+        int passed, total;
+
+        ClassData(int p, int t) {
+            this.passed = p;
+            this.total = t;
+        }
+
+        double gain() {
+            return (double)(passed + 1) / (total + 1) - (double) passed / total;
+        }
+    }
+}
