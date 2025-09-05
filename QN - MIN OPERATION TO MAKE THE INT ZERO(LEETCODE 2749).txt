@@ -1,0 +1,16 @@
+QN - MIN OPERATION TO MAKE THE INTEGER ZERO
+
+
+class Solution {
+    public int makeTheIntegerZero(int num1, int num2) {
+        for (int k = 1; k <= 60; k++) {
+            long target = (long) num1 - (long) k * num2; // use long to avoid overflow
+            if (target < k) continue; 
+            // check if target can be expressed as sum of k powers of 2
+            if (Long.bitCount(target) <= k && k <= target) {
+                return k;
+            }
+        }
+        return -1;
+    }
+}
