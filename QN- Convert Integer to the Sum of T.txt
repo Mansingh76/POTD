@@ -1,0 +1,27 @@
+QN. Convert Integer to the Sum of Two No-Zero Integers(LEETCODE 1317)
+
+
+class Solution {
+    public int[] getNoZeroIntegers(int n) {
+        int a = n / 2;      // take half
+        int b = n - a;      // other half
+
+        // if any number has '0', adjust
+        while (hasZero(a) || hasZero(b)) {
+            a--;
+            b++;
+        }
+
+        return new int[]{a, b};
+    }
+
+    private boolean hasZero(int num) {
+        while (num > 0) {
+            if (num % 10 == 0) return true; // found a '0'
+            num /= 10;
+        }
+        return false;
+    }
+}
+
+
