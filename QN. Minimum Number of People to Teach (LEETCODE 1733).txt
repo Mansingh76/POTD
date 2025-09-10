@@ -1,0 +1,48 @@
+
+QN.Minimum Number of People to Teach(LEETCODE 1733)
+
+
+
+class Solution {
+    public int minimumTeachings(int n, int[][] languages, int[][] friendships) {
+    //  Build sets of languages known by each person
+        List<Set<Integer>> know = new ArrayList<>();
+        know.add(new HashSet<>()); // dummy for 1-based indexing
+        for (int[] langs : languages) {
+            Set<Integer> set = new HashSet<>();
+            for (int lang : langs) set.add(lang);
+            know.add(set);
+        }
+
+    // Find people who need teaching
+        Set<Integer> needTeach = new HashSet<>();
+        for (int[] f : friendships) {
+            int u = f[0], v = f[1];
+            boolean canCommunicate = false;
+            for (int lang : know.get(u)) {
+                if (know.get(v).contains(lang)) {
+                    canCommunicate = true;
+                    break;
+                }
+            }
+            if (!canCommunicate) {
+                needTeach.add(u);
+                needTeach.add(v);
+            }
+        }
+
+    // Count how many in needTeach know each language
+        int[] langCount = new int[n + 1];
+        for (int person : needTeach) {
+            for (int lang : know.get(person)) {
+                langCount[lang]++;
+            }
+        }
+
+    // Pick best language
+        int maxKnown = 0;
+        for (int c : langCount) maxKnown = Math.max(maxKnown, c);
+
+        return needTeach.size() - maxKnown;
+    }
+}
