@@ -1,0 +1,33 @@
+
+QN -Sort Vowels in a String(LEETCODE 2785)
+
+
+class Solution {
+    public String sortVowels(String s) {
+        String vowelsSet = "aeiouAEIOU";
+        
+        //  Collect vowels
+        List<Character> vowels = new ArrayList<>();
+        for (char c : s.toCharArray()) {
+            if (vowelsSet.indexOf(c) != -1) {
+                vowels.add(c);
+            }
+        }
+        
+        //  Sort vowels
+        Collections.sort(vowels);
+        
+        //  Rebuild string
+        StringBuilder result = new StringBuilder();
+        int idx = 0;
+        for (char c : s.toCharArray()) {
+            if (vowelsSet.indexOf(c) != -1) {
+                result.append(vowels.get(idx++));
+            } else {
+                result.append(c);
+            }
+        }
+        
+        return result.toString();
+    }
+}
