@@ -1,0 +1,18 @@
+QN.Maximum Number of Words You Can Type(LEETCODE 1935)
+
+
+class Solution {
+    public int canBeTypedWords(String text, String brokenLetters) {
+        boolean[] broken = new boolean[26];
+        for (char c : brokenLetters.toCharArray()) broken[c - 'a'] = true;
+        int ans = 0;
+        for (String w : text.split(" ")) {
+            boolean ok = true;
+            for (char c : w.toCharArray()) {
+                if (broken[c - 'a']) { ok = false; break; }
+            }
+            if (ok) ans++;
+        }
+        return ans;
+    }
+}
