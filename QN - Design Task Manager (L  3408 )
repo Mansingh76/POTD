@@ -1,0 +1,91 @@
+public class TaskManager {
+    private static class Task implements Comparable<Task> {
+        int userId;
+        int taskId;
+        int priority;
+
+        Task(int userId, int taskId, int priority) {
+            this.userId = userId;
+            this.taskId = taskId;
+            this.priority = priority;
+        }
+
+        @Override
+        public int compareTo(Task other) {
+            // Higher priority first
+            if (this.priority != other.priority) {
+                return Integer.compare(other.priority, this.priority);
+            }
+            // If priority tie, higher taskId first
+            return Integer.compare(other.taskId, this.taskId);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Task)) return false;
+            Task t = (Task)o;
+            return this.taskId == t.taskId 
+                && this.priority == t.priority 
+                && this.userId == t.userId;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(userId, taskId, priority);
+        }
+    }
+
+    // Maps taskId -> Task object
+    private Map<Integer, Task> taskMap;
+    // Keeps tasks sorted by priority desc & taskId desc
+    private TreeSet<Task> taskSet;
+
+    public TaskManager(List<List<Integer>> tasks) {
+        taskMap = new HashMap<>();
+        taskSet = new TreeSet<>();
+        for (List<Integer> t : tasks) {
+            int userId = t.get(0), taskId = t.get(1), priority = t.get(2);
+            add(userId, taskId, priority);
+        }
+    }
+
+    public void add(int userId, int taskId, int priority) {
+        Task task = new Task(userId, taskId, priority);
+        taskMap.put(taskId, task);
+        taskSet.add(task);
+    }
+
+    public void edit(int taskId, int newPriority) {
+        Task old = taskMap.get(taskId);
+        if (old == null) {
+            // should not happen per constraints, but safe guard
+            return;
+        }
+        // remove old, then insert updated
+        taskSet.remove(old);
+        Task updated = new Task(old.userId, taskId, newPriority);
+        taskMap.put(taskId, updated);
+        taskSet.add(updated);
+    }
+
+    public void rmv(int taskId) {
+        Task old = taskMap.get(taskId);
+        if (old == null) {
+            return;
+        }
+        taskSet.remove(old);
+        taskMap.remove(taskId);
+    }
+
+    public int execTop() {
+        if (taskSet.isEmpty()) {
+            return -1;
+        }
+        Task top = taskSet.first();
+        taskSet.remove(top);
+        taskMap.remove(top.taskId);
+        return top.userId;
+    }
+}
+
