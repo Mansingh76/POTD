@@ -1,0 +1,32 @@
+public class Spreadsheet {
+    private Map<String, Integer> cells;
+
+    public Spreadsheet(int rows) {
+        cells = new HashMap<>();
+    }
+
+    public void setCell(String cell, int value) {
+        cells.put(cell, value);
+    }
+
+    public void resetCell(String cell) {
+        cells.remove(cell);
+    }
+
+    public int getValue(String formula) {
+        // Formula always like "=X+Y"
+        String[] parts = formula.substring(1).split("\\+");
+        return eval(parts[0]) + eval(parts[1]);
+    }
+
+    private int eval(String token) {
+        // If it's a number
+        if (Character.isDigit(token.charAt(0))) {
+            return Integer.parseInt(token);
+        }
+        // Else it's a cell reference
+        return cells.getOrDefault(token, 0);
+    }
+}
+
+
