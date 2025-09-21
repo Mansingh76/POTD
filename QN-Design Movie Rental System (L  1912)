@@ -1,0 +1,89 @@
+public class MovieRentingSystem {
+    // Map (shop, movie) -> price
+    private Map<String, Integer> priceMap;
+    // For each movie: available shops sorted by price, shop
+    private Map<Integer, TreeSet<Entry>> available;
+    // Global rented movies sorted by price, shop, movie
+    private TreeSet<Entry> rented;
+
+    private static class Entry {
+        int shop, movie, price;
+        Entry(int s, int m, int p) { shop = s; movie = m; price = p; }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Entry)) return false;
+            Entry e = (Entry) o;
+            return shop == e.shop && movie == e.movie && price == e.price;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(shop, movie, price);
+        }
+    }
+
+    public MovieRentingSystem(int n, int[][] entries) {
+        priceMap = new HashMap<>();
+        available = new HashMap<>();
+        rented = new TreeSet<>((a, b) -> {
+            if (a.price != b.price) return a.price - b.price;
+            if (a.shop != b.shop) return a.shop - b.shop;
+            return a.movie - b.movie;
+        });
+
+        for (int[] e : entries) {
+            int shop = e[0], movie = e[1], price = e[2];
+            String key = shop + "," + movie;
+            priceMap.put(key, price);
+
+            available.computeIfAbsent(movie, k -> new TreeSet<>((a, b) -> {
+                if (a.price != b.price) return a.price - b.price;
+                return a.shop - b.shop;
+            }));
+
+            available.get(movie).add(new Entry(shop, movie, price));
+        }
+    }
+
+    public List<Integer> search(int movie) {
+        List<Integer> result = new ArrayList<>();
+        if (!available.containsKey(movie)) return result;
+
+        Iterator<Entry> it = available.get(movie).iterator();
+        int count = 0;
+        while (it.hasNext() && count < 5) {
+            result.add(it.next().shop);
+            count++;
+        }
+        return result;
+    }
+
+    public void rent(int shop, int movie) {
+        int price = priceMap.get(shop + "," + movie);
+        Entry e = new Entry(shop, movie, price);
+        available.get(movie).remove(e);
+        rented.add(e);
+    }
+
+    public void drop(int shop, int movie) {
+        int price = priceMap.get(shop + "," + movie);
+        Entry e = new Entry(shop, movie, price);
+        rented.remove(e);
+        available.get(movie).add(e);
+    }
+
+    public List<List<Integer>> report() {
+        List<List<Integer>> res = new ArrayList<>();
+        Iterator<Entry> it = rented.iterator();
+        int count = 0;
+        while (it.hasNext() && count < 5) {
+            Entry e = it.next();
+            res.add(Arrays.asList(e.shop, e.movie));
+            count++;
+        }
+        return res;
+    }
+}
+
