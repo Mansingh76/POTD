@@ -1,0 +1,61 @@
+
+public class FoodRatings {
+    // food -> rating
+    private Map<String, Integer> foodToRating;
+    // food -> cuisine
+    private Map<String, String> foodToCuisine;
+    // cuisine -> max heap of (rating, name)
+    private Map<String, PriorityQueue<Food>> cuisineHeaps;
+
+    private static class Food {
+        String name;
+        int rating;
+
+        Food(String name, int rating) {
+            this.name = name;
+            this.rating = rating;
+        }
+    }
+
+    public FoodRatings(String[] foods, String[] cuisines, int[] ratings) {
+        foodToRating = new HashMap<>();
+        foodToCuisine = new HashMap<>();
+        cuisineHeaps = new HashMap<>();
+
+        for (int i = 0; i < foods.length; i++) {
+            String f = foods[i], c = cuisines[i];
+            int r = ratings[i];
+            foodToRating.put(f, r);
+            foodToCuisine.put(f, c);
+
+            cuisineHeaps.computeIfAbsent(c, k -> new PriorityQueue<>((a, b) -> {
+                if (b.rating != a.rating) return b.rating - a.rating; // higher rating first
+                return a.name.compareTo(b.name); // lexicographically smaller first
+            }));
+
+            cuisineHeaps.get(c).offer(new Food(f, r));
+        }
+    }
+
+    public void changeRating(String food, int newRating) {
+        foodToRating.put(food, newRating);
+        String cuisine = foodToCuisine.get(food);
+        // Push new value; old one remains but will be skipped later
+        cuisineHeaps.get(cuisine).offer(new Food(food, newRating));
+    }
+
+    public String highestRated(String cuisine) {
+        PriorityQueue<Food> pq = cuisineHeaps.get(cuisine);
+
+        // Lazy deletion: pop until top is consistent
+        while (true) {
+            Food top = pq.peek();
+            int currRating = foodToRating.get(top.name);
+            if (top.rating == currRating) {
+                return top.name;
+            } else {
+                pq.poll(); // remove stale
+            }
+        }
+    }
+}
