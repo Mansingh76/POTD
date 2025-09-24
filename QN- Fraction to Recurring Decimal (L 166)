@@ -1,0 +1,42 @@
+class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        if (numerator == 0) return "0";
+
+        StringBuilder res = new StringBuilder();
+
+        // Handle sign
+        if ((numerator < 0) ^ (denominator < 0)) {
+            res.append("-");
+        }
+
+        // Convert to long to handle overflow (e.g., -2147483648 case)
+        long num = Math.abs((long) numerator);
+        long den = Math.abs((long) denominator);
+
+        // Integer part
+        res.append(num / den);
+        long remainder = num % den;
+
+        if (remainder == 0) return res.toString();
+
+        res.append(".");
+
+        // Fractional part
+        Map<Long, Integer> remainderMap = new HashMap<>();
+        while (remainder != 0) {
+            if (remainderMap.containsKey(remainder)) {
+                // Insert '(' at the position where remainder first appeared
+                res.insert(remainderMap.get(remainder), "(");
+                res.append(")");
+                break;
+            }
+
+            remainderMap.put(remainder, res.length());
+            remainder *= 10;
+            res.append(remainder / den);
+            remainder %= den;
+        }
+
+        return res.toString();
+    }
+}
